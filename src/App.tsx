@@ -43,6 +43,7 @@ function App() {
             <main className="flex-grow" role="main">
               <Suspense fallback={<div className="flex justify-center items-center h-64" role="status" aria-live="polite">Cargando...</div>}>
                 <Routes>
+                  <Route element={<Navigate to="/" replace />} />
                   <Route path="/" element={<Home />} />
                   <Route path="/card/*" element={<Card />} />
                   <Route path="/properties" element={<Properties />} />
@@ -67,3 +68,4 @@ function App() {
 }
 
 export default App;
+
