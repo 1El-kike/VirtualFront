@@ -9,7 +9,7 @@ const resources = {
       properties: "Properties",
       contact: "Contact",
       blog: "Blog",
-      heroTitle: "Find Your Dream Home Virtually",
+      heroTitle: "Find Your Dream Home",
       heroSubtitle:
         "Explore properties from anywhere with our immersive virtual tours and advanced search tools.",
       createCard: "Create Card",
@@ -41,7 +41,7 @@ const resources = {
       properties: "Propiedades",
       contact: "Contacto",
       blog: "Blog",
-      heroTitle: "Encuentra tu Hogar Soñado Virtualmente",
+      heroTitle: "Descubre tu Hogar Soñado",
       heroSubtitle:
         "Explora propiedades desde cualquier lugar con nuestros tours virtuales inmersivos y herramientas de búsqueda avanzadas.",
       createCard: "Crear Ficha",

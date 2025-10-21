@@ -7,6 +7,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import api from '../utils/api';
 import type { Property } from '../types';
+import HeroSection from '../components/home/HeroSection';
 
 const Home: React.FC = () => {
     const { t } = useTranslation();
@@ -40,36 +41,7 @@ const Home: React.FC = () => {
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             {/* Hero Section */}
-            <section className="relative h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-700 text-white">
-                <div className="absolute inset-0 bg-black opacity-50"></div>
-                <div className="relative z-10 text-center px-4">
-                    <motion.h1
-                        className="text-5xl md:text-7xl font-bold mb-6"
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        {t('heroTitle')}
-                    </motion.h1>
-                    <motion.p
-                        className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                    >
-                        {t('heroSubtitle')}
-                    </motion.p>
-                    <motion.button
-                        className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        onClick={() => window.location.href = '/card/create'}
-                    >
-                        {t('createCard')}
-                    </motion.button>
-                </div>
-            </section>
+            <HeroSection />
 
             {/* Featured Properties Section */}
             <section className="py-16 bg-gray-50" data-aos="fade-up">
