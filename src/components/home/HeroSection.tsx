@@ -32,10 +32,10 @@ const HeroSection = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <HomeModernIcon className='w-40 text-yellow-500' />
+                    <HomeModernIcon className='w-40 text-teal-200' />
                 </motion.div>
                 <motion.h1
-                    className="text-4xl md:text-7xl font-serif font-bold mb-6 bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent "
+                    className="text-4xl md:text-8xl font-sans text-shadow-teal-500 text-shadow-lg  font-bold mb-6"
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}

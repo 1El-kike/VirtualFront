@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import api from '../utils/api';
-import type { Property } from '../types';
 import HeroSection from '../components/home/HeroSection';
+import FeaturedProperties from '../components/home/FeaturedProperties';
 
 const Home: React.FC = () => {
     const { t } = useTranslation();
@@ -19,15 +17,7 @@ const Home: React.FC = () => {
         });
     }, []);
 
-    const { data: properties, isLoading, error } = useQuery<Property[]>({
-        queryKey: ['properties'],
-        queryFn: async () => {
-            const response = await api.get('/properties');
-            return response.data;
-        },
-    });
 
-    const featuredProperties = properties?.slice(0, 4) || [];
 
     return (
         <div className="min-h-screen">
@@ -44,40 +34,7 @@ const Home: React.FC = () => {
             <HeroSection />
 
             {/* Featured Properties Section */}
-            <section className="py-16 bg-gray-50" data-aos="fade-up">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-4xl font-bold text-center mb-12">{t('featuredProperties')}</h2>
-                    {isLoading ? (
-                        <div className="text-center">Cargando propiedades...</div>
-                    ) : error ? (
-                        <div className="text-center text-red-500">Error al cargar propiedades</div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {featuredProperties.map((property) => (
-                                <motion.div
-                                    key={property.id}
-                                    className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                                    whileHover={{ scale: 1.05 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <img
-                                        src={property.images[0] || '/placeholder.jpg'}
-                                        alt={property.title}
-                                        className="w-full h-48 object-cover"
-                                        loading="lazy"
-                                    />
-                                    <div className="p-4">
-                                        <h3 className="text-xl font-semibold mb-2">{property.title}</h3>
-                                        <p className="text-gray-600 mb-2">{property.location}</p>
-                                        <p className="text-2xl font-bold text-blue-600">${property.price.toLocaleString()}</p>
-                                        <p className="text-sm text-gray-500">{property.bedrooms} hab • {property.bathrooms} baños • {property.sqm} m²</p>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
+            <FeaturedProperties />
 
             {/* Services Section */}
             <section className="py-16 bg-white" data-aos="fade-up">
