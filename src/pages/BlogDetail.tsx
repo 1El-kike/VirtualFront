@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import api from '../utils/api';
 import type { BlogPost } from '../types';
+import { getImageUrl } from '../utils/imageHelper';
 
 const BlogDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -62,7 +63,7 @@ const BlogDetail: React.FC = () => {
                 <article className="bg-white rounded-lg shadow-md p-8">
                     {post.image && (
                         <img
-                            src={post.image}
+                            src={getImageUrl(post.image)}
                             alt={post.title}
                             className="w-full h-64 object-cover rounded-lg mb-6"
                             loading="lazy"

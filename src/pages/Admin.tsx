@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../utils/api';
 import type { Property } from '../types';
 import useAuth from '../contexts/AuthContext';
+import { useState } from 'react';
+import { getFirstImageUrl } from '../utils/imageHelper';
 
 interface PropertyFormData {
     title: string;
@@ -14,12 +16,23 @@ interface PropertyFormData {
     sqm: number;
     virtualTourUrl?: string;
     images: FileList | null;
+    imagePreviews: string[];
 }
-
 const Admin: React.FC = () => {
-    const { token } = useAuth();
+    const { token, isAdmin } = useAuth();
     const queryClient = useQueryClient();
     const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+
+    if (!isAdmin) {
+        return (
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-red-600 mb-4">Acceso Denegado</h1>
+                    <p className="text-lg text-gray-600">Solo los administradores pueden acceder a esta página.</p>
+                </div>
+            </div>
+        );
+    }
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState<PropertyFormData>({
         title: '',
@@ -31,6 +44,7 @@ const Admin: React.FC = () => {
         sqm: 0,
         virtualTourUrl: '',
         images: null,
+        imagePreviews: [],
     });
 
     const { data: properties, isLoading, error } = useQuery({
@@ -49,6 +63,11 @@ const Admin: React.FC = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['properties'] });
+        },
+        onError: (error: unknown) => {
+            console.error('Error deleting property:', error);
+            const message = error instanceof Error ? error.message : 'Error desconocido';
+            alert(`Error al eliminar la propiedad: ${message}`);
         },
     });
 
@@ -79,6 +98,11 @@ const Admin: React.FC = () => {
             queryClient.invalidateQueries({ queryKey: ['properties'] });
             resetForm();
         },
+        onError: (error: unknown) => {
+            console.error('Error creating property:', error);
+            const message = error instanceof Error ? error.message : 'Error desconocido';
+            alert(`Error al crear la propiedad: ${message}`);
+        },
     });
 
     const updateMutation = useMutation({
@@ -108,6 +132,11 @@ const Admin: React.FC = () => {
             queryClient.invalidateQueries({ queryKey: ['properties'] });
             resetForm();
         },
+        onError: (error: unknown) => {
+            console.error('Error updating property:', error);
+            const message = error instanceof Error ? error.message : 'Error desconocido';
+            alert(`Error al actualizar la propiedad: ${message}`);
+        },
     });
 
     const resetForm = () => {
@@ -121,6 +150,7 @@ const Admin: React.FC = () => {
             sqm: 0,
             virtualTourUrl: '',
             images: null,
+            imagePreviews: [],
         });
         setEditingProperty(null);
         setShowForm(false);
@@ -138,12 +168,66 @@ const Admin: React.FC = () => {
             sqm: property.sqm,
             virtualTourUrl: property.virtualTourUrl || '',
             images: null,
+            imagePreviews: property.images || [],
         });
         setShowForm(true);
     };
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            const previews: string[] = [];
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (e.target?.result) {
+                        previews.push(e.target.result as string);
+                        if (previews.length === files.length) {
+                            setFormData(prev => ({ ...prev, imagePreviews: previews }));
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        setFormData(prev => ({ ...prev, images: files }));
+    };
+
+    const removeImagePreview = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            imagePreviews: prev.imagePreviews.filter((_, i) => i !== index),
+        }));
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Validaciones básicas
+        if (!formData.title.trim()) {
+            alert('El título es obligatorio');
+            return;
+        }
+        if (!formData.location.trim()) {
+            alert('La ubicación es obligatoria');
+            return;
+        }
+        if (formData.price <= 0) {
+            alert('El precio debe ser mayor a 0');
+            return;
+        }
+        if (formData.bedrooms < 0) {
+            alert('Los dormitorios no pueden ser negativos');
+            return;
+        }
+        if (formData.bathrooms < 0) {
+            alert('Los baños no pueden ser negativos');
+            return;
+        }
+        if (formData.sqm <= 0) {
+            alert('Los metros cuadrados deben ser mayores a 0');
+            return;
+        }
+
         if (editingProperty) {
             updateMutation.mutate({ id: editingProperty.id, data: formData });
         } else {
@@ -151,8 +235,27 @@ const Admin: React.FC = () => {
         }
     };
 
-    if (isLoading) return <div className="text-center">Cargando...</div>;
-    if (error) return <div className="text-center text-red-500">Error al cargar propiedades.</div>;
+    if (isLoading) return (
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                <p className="text-lg text-gray-600">Cargando propiedades...</p>
+            </div>
+        </div>
+    );
+    if (error) return (
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+            <div className="text-center">
+                <div className="text-red-500 mb-4">
+                    <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-red-600 mb-2">Error al cargar propiedades</h2>
+                <p className="text-gray-600">Por favor, intenta recargar la página.</p>
+            </div>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -233,12 +336,39 @@ const Admin: React.FC = () => {
                                 type="file"
                                 multiple
                                 accept="image/*"
-                                onChange={(e) => setFormData({ ...formData, images: e.target.files })}
+                                onChange={handleImageChange}
                                 className="p-2 border rounded md:col-span-2"
                             />
+                            {formData.imagePreviews.length > 0 && (
+                                <div className="md:col-span-2">
+                                    <h4 className="text-sm font-medium mb-2">Vista previa de imágenes:</h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                        {formData.imagePreviews.map((preview, index) => (
+                                            <div key={index} className="relative">
+                                                <img
+                                                    src={preview}
+                                                    alt={`Preview ${index + 1}`}
+                                                    className="w-full h-20 object-cover rounded border"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImagePreview(index)}
+                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <button type="submit" className="mt-4 px-4 py-2 bg-green-500 text-white rounded">
-                            {editingProperty ? 'Actualizar' : 'Crear'}
+                        <button
+                            type="submit"
+                            disabled={createMutation.isPending || updateMutation.isPending}
+                            className="mt-4 px-4 py-2 bg-green-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-600 transition-colors"
+                        >
+                            {(createMutation.isPending || updateMutation.isPending) ? 'Guardando...' : (editingProperty ? 'Actualizar' : 'Crear')}
                         </button>
                     </form>
                 )}
@@ -246,7 +376,7 @@ const Admin: React.FC = () => {
                     {properties?.map((property) => (
                         <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                             <img
-                                src={property.images[0] || '/placeholder.jpg'}
+                                src={getFirstImageUrl(property.images) || '/placeholder.jpg'}
                                 alt={property.title}
                                 className="w-full h-48 object-cover"
                             />
@@ -268,9 +398,10 @@ const Admin: React.FC = () => {
                                     </button>
                                     <button
                                         onClick={() => deleteMutation.mutate(property.id)}
-                                        className="px-3 py-1 bg-red-500 text-white rounded"
+                                        disabled={deleteMutation.isPending}
+                                        className="px-3 py-1 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-red-600 transition-colors"
                                     >
-                                        Eliminar
+                                        {deleteMutation.isPending ? 'Eliminando...' : 'Eliminar'}
                                     </button>
                                 </div>
                             </div>

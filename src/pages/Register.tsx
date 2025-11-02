@@ -29,14 +29,10 @@ const Register: React.FC = () => {
 
     const registerMutation = useMutation({
         mutationFn: async (data: RegisterFormData) => {
-            console.log('Enviando petición a:', api.defaults.baseURL + '/auth/register');
-            console.log('Datos enviados:', data);
             const response = await api.post('/auth/register', data);
-            console.log('Respuesta del servidor:', response);
             return response.data;
         },
         onSuccess: (data) => {
-            console.log('Registro exitoso:', data);
             login(data.token);
             navigate('/');
         },
@@ -47,7 +43,6 @@ const Register: React.FC = () => {
     });
 
     const onSubmit = (data: RegisterFormData) => {
-        console.log('Datos del formulario:', data);
         registerMutation.mutate(data);
     };
 

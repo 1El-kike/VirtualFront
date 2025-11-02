@@ -13,7 +13,12 @@ const resources = {
       heroSubtitle:
         "Explore properties from anywhere with our immersive virtual tours and advanced search tools.",
       createCard: "Create Card",
-      featuredProperties: "Featured Properties",
+      featuredProperties: "Record Result",
+      Remodeling: "Remodeling",
+      Contruction: "Contruction",
+      reservation: "Reservation or Accommodation",
+      rent: "Rent",
+      swaps: "Swaps",
       services: "Our Services",
       advancedSearch: "Advanced Search",
       advancedSearchDesc:
@@ -45,7 +50,12 @@ const resources = {
       heroSubtitle:
         "Explora propiedades desde cualquier lugar con nuestros tours virtuales inmersivos y herramientas de búsqueda avanzadas.",
       createCard: "Crear Ficha",
-      featuredProperties: "Propiedades Destacadas",
+      featuredProperties: "Resultado de Ficha",
+      Remodeling: "Remodelación",
+      Contruction: "Construcción",
+      reservation: "Reservación o Hospedaje",
+      rent: "Renta",
+      swaps: "Permutas",
       services: "Nuestros Servicios",
       advancedSearch: "Búsqueda Avanzada",
       advancedSearchDesc:

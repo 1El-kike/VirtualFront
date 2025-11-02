@@ -29,7 +29,6 @@ const Properties: React.FC = () => {
     const { data, isLoading, error } = useQuery({
         queryKey: ['properties', filters, page],
         queryFn: async () => {
-            console.log('Iniciando carga de propiedades con filtros:', filters, 'página:', page);
             const params = {
                 location: filters.location || undefined,
                 minPrice: filters.minPrice || undefined,
@@ -40,10 +39,8 @@ const Properties: React.FC = () => {
                 page,
                 limit,
             };
-            console.log('Parámetros de la solicitud:', params);
             try {
                 const response = await api.get('/properties', { params });
-                console.log('Respuesta del backend:', response);
                 return response.data as { properties: Property[]; total: number };
             } catch (err) {
                 console.error('Error en la solicitud:', err);
@@ -71,8 +68,6 @@ const Properties: React.FC = () => {
 
     const totalPages = data ? Math.ceil(data.total / limit) : 0;
 
-
-    console.log(data)
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="container mx-auto px-4 py-8">
@@ -82,10 +77,8 @@ const Properties: React.FC = () => {
                 {error && <p className="text-center text-red-500">Error al cargar propiedades.</p>}
                 {data && (
                     <>
-                        {(() => console.log('Properties array:', data?.properties))()}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                             {data?.properties?.map((property) => {
-                                console.log('Rendering property:', property.id);
                                 return <PropertyCard key={property.id} property={property} />;
                             })}
                         </div>

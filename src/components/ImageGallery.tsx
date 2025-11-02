@@ -2,6 +2,7 @@ import React from 'react';
 import ImageGallery from 'react-image-gallery';
 import { motion } from 'framer-motion';
 import 'react-image-gallery/styles/css/image-gallery.css';
+import { getImageUrls } from '../utils/imageHelper';
 
 interface ImageGalleryProps {
     images: string[];
@@ -21,7 +22,8 @@ const ImageGalleryComponent: React.FC<ImageGalleryProps> = ({ images }) => {
         );
     }
 
-    const galleryImages = images.map((image) => ({
+    const processedImages = getImageUrls(images);
+    const galleryImages = processedImages.map((image) => ({
         original: image,
         thumbnail: image,
     }));

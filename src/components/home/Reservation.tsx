@@ -1,18 +1,17 @@
+import { useTranslation } from "react-i18next";
+import Corousel from "../../widget/corousel";
 import { useQuery } from "@tanstack/react-query";
 import type { Property } from "../../types";
 import api from "../../utils/api";
-//import { motion } from 'framer-motion';
-import { useTranslation } from "react-i18next";
-import Corousel from "../../widget/corousel";
 
 
-const FeaturedProperties = () => {
+const Reservation = () => {
     const { t } = useTranslation();
 
     const { data: properties, isLoading, error } = useQuery<Property[]>({
-        queryKey: ['properties'],
+        queryKey: ['reservation'],
         queryFn: async () => {
-            const response = await api.get('/properties');
+            const response = await api.get('/reservation');
             return response.data;
         },
     });
@@ -20,13 +19,13 @@ const FeaturedProperties = () => {
 
 
     return (
-        <section className="py-16 bg-gray-50" data-aos="fade-up">
+        <section className="py-16" data-aos="fade-up">
             <div className="container mx-auto px-4">
-                <h2 className="text-4xl font-bold text-center mb-12">{t('featuredProperties')}</h2>
+                <h2 className="text-4xl font-bold text-center mb-12">{t('reservation')}</h2>
                 {isLoading ? (
-                    <div className="text-center">Cargando propiedades...</div>
+                    <div className="text-center">Cargando Reservación o Hospedaje...</div>
                 ) : error ? (
-                    <div className="text-center text-red-500">Error al cargar propiedades</div>
+                    <div className="text-center text-red-500">Error al cargar Reservación o Hospedaje</div>
                 ) : (
                     <Corousel
                         element={properties as Property[]}
@@ -43,4 +42,4 @@ const FeaturedProperties = () => {
     )
 }
 
-export default FeaturedProperties
+export default Reservation

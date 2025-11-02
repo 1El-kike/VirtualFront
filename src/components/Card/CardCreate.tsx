@@ -14,8 +14,6 @@ const CardCreate: React.FC = () => {
             createdAt: new Date()
         };
 
-        console.log('Datos del formulario:', completeData);
-
         // Guardar en localStorage
         const existingCards = localStorage.getItem('housePreferences');
         const cards = existingCards ? JSON.parse(existingCards) : [];

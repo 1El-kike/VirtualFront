@@ -1,5 +1,6 @@
 import React from 'react';
 import type { BlogPost } from '../types';
+import { getImageUrl } from '../utils/imageHelper';
 
 interface BlogCardProps {
     post: BlogPost;
@@ -20,7 +21,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, onClick }) => {
             onClick={onClick}
         >
             <img
-                src={post.image || '/placeholder-image.jpg'} // Placeholder si no hay imagen
+                src={post.image ? getImageUrl(post.image) : '/placeholder-image.jpg'} // Placeholder si no hay imagen
                 alt={post.title}
                 className="w-full h-48 object-cover"
             />

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Property } from '../types';
+import { getFirstImageUrl } from '../utils/imageHelper';
 
 interface PropertyCardProps {
     property: Property;
@@ -9,7 +10,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     return (
         <article className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 animate-fade-in" role="article" aria-labelledby={`property-title-${property.id}`}>
             <img
-                src={property.images[0] || '/placeholder.jpg'}
+                src={getFirstImageUrl(property.images) || '/placeholder.jpg'}
                 alt={`Imagen de la propiedad ${property.title} ubicada en ${property.location}`}
                 className="w-full h-48 object-cover"
                 loading="lazy"
