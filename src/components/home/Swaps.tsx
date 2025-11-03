@@ -10,7 +10,7 @@ const Swaps = () => {
     const { data: properties, isLoading, error } = useQuery<Property[]>({
         queryKey: ['swaps'],
         queryFn: async () => {
-            const response = await api.get('/swaps');
+            const response = await api.get('/swaps/available-properties');
             return response.data;
         },
     });

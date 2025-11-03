@@ -19,8 +19,16 @@ export interface Property {
   sqm: number;
   images: string[];
   virtualTourUrl?: string;
+  type: string;
+  status: string;
+  transation: string;
   createdAt: Date;
   updatedAt: Date;
+  userId: number;
+  user?: {
+    nombre?: string;
+    email: string;
+  };
 }
 
 export interface Lead {
@@ -43,6 +51,140 @@ export interface BlogPost {
   updatedAt: Date;
   author: User;
   image?: string;
+}
+
+export interface Swap {
+  id: number;
+  description?: string;
+  status: string;
+  fechasSolicitud: Date;
+  fechaFinalizacion?: Date;
+  userId: number;
+  propertyofrecidaId: number;
+  propertyDeseadaId: number;
+  user: {
+    nombre?: string;
+    email: string;
+  };
+  propertyOfrecida: {
+    id: number;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+  propertyDeseada: {
+    id: number;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Rent {
+  id: number;
+  priceMensual: number;
+  deposito: number;
+  duracionContrato: number;
+  FechaInit: Date;
+  fechaEnd?: Date;
+  mascota: boolean;
+  amueblado: boolean;
+  serviceInclude?: string;
+  status: string;
+  propertyId: number;
+  userId: number;
+  property: {
+    id: number;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+  user: {
+    nombre?: string;
+    email: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Reservation {
+  id: number;
+  fechaReservation: Date;
+  fechaVisita: Date;
+  status: string;
+  notas?: string;
+  propertyId: number;
+  userId: number;
+  property: {
+    id: number;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+  user: {
+    nombre?: string;
+    email: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Construction {
+  id: number;
+  nameProyect: string;
+  description: string;
+  direction: string;
+  fechaInicial: Date;
+  fechaEstimada: Date;
+  presupuesto: number;
+  etapa: string;
+  status: string;
+  propertyId: number;
+  userId: number;
+  property: {
+    id: number;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+  user: {
+    nombre?: string;
+    email: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Remodeling {
+  id: number;
+  description: string;
+  presupuesto: number;
+  fechaInit: Date;
+  fechaEndEstimada: Date;
+  services: string;
+  status: string;
+  propertyId: number;
+  userId: number;
+  property: {
+    id: number;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+  user: {
+    nombre?: string;
+    email: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface HousePreferences {

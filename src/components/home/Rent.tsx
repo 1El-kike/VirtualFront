@@ -10,7 +10,7 @@ const Rent = () => {
     const { data: properties, isLoading, error } = useQuery<Property[]>({
         queryKey: ['rent'],
         queryFn: async () => {
-            const response = await api.get('/rent');
+            const response = await api.get('/rents/available-properties');
             return response.data;
         },
     });
