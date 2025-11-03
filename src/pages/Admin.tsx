@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AdminLayout } from '../components/admin/AdminLayout';
+import { EntityCreationForm } from '../components/admin/EntityCreationForm';
 import { PropertiesTab } from '../components/admin/tabs/PropertiesTab';
 import { SwapsTab } from '../components/admin/tabs/SwapsTab';
 import { EntityManagementTab } from '../components/admin/tabs/EntityManagementTab';
@@ -181,7 +182,19 @@ const Admin: React.FC = () => {
             {/* Main Content */}
             <main className="flex-1 overflow-hidden min-h-0">
                 <div className="h-full overflow-y-auto">
-                    <AdminLayout title="">
+                    <div className='my-5 mx-7'>
+
+                        {/* Entity Creation Form */}
+                        <EntityCreationForm
+                            activeTab={activeTab}
+                            onEntityCreated={() => {
+                                // This will be called when an entity is created
+                                // We can add specific refresh logic here if needed
+                            }}
+                        />
+                    </div>
+                    <AdminLayout title="Vista">
+
                         {activeTab === 'properties' && <PropertiesTab />}
 
                         {activeTab === 'swaps' && <SwapsTab />}
