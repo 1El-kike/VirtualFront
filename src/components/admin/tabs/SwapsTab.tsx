@@ -2,7 +2,7 @@ import React from 'react';
 import type { Swap } from '../../../types';
 import { EntityManagementTab } from './EntityManagementTab';
 
-export const SwapsTab: React.FC = () => {
+export const SwapsTab: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger }) => {
     const renderAdditionalInfo = (entity: Swap) => (
         <div className="mb-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -32,6 +32,7 @@ export const SwapsTab: React.FC = () => {
             apiEndpoint="/swaps"
             type="swap"
             renderAdditionalInfo={renderAdditionalInfo}
+            refreshTrigger={refreshTrigger}
         />
     );
 };

@@ -10,6 +10,7 @@ import { HomeIcon, ArrowPathIcon, BuildingOfficeIcon, CalendarDaysIcon, WrenchSc
 
 const Admin: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('properties');
+    const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
     const renderAdditionalInfo = (entity: Rent) => (
         <div className="mb-4">
@@ -54,6 +55,10 @@ const Admin: React.FC = () => {
             </p>
         </div>
     );
+
+    const handleEntityCreated = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
 
     const menuItems = [
         {
@@ -187,17 +192,14 @@ const Admin: React.FC = () => {
                         {/* Entity Creation Form */}
                         <EntityCreationForm
                             activeTab={activeTab}
-                            onEntityCreated={() => {
-                                // This will be called when an entity is created
-                                // We can add specific refresh logic here if needed
-                            }}
+                            onEntityCreated={handleEntityCreated}
                         />
                     </div>
                     <AdminLayout title="Vista">
 
-                        {activeTab === 'properties' && <PropertiesTab />}
+                        {activeTab === 'properties' && <PropertiesTab refreshTrigger={refreshTrigger} />}
 
-                        {activeTab === 'swaps' && <SwapsTab />}
+                        {activeTab === 'swaps' && <SwapsTab refreshTrigger={refreshTrigger} />}
 
                         {activeTab === 'rents' && (
                             <EntityManagementTab<Rent>
@@ -206,6 +208,7 @@ const Admin: React.FC = () => {
                                 apiEndpoint="/rents"
                                 type="rent"
                                 renderAdditionalInfo={renderAdditionalInfo}
+                                refreshTrigger={refreshTrigger}
                             />
                         )}
 
@@ -216,6 +219,7 @@ const Admin: React.FC = () => {
                                 apiEndpoint="/reservations"
                                 type="reservation"
                                 renderAdditionalInfo={renderReservationInfo}
+                                refreshTrigger={refreshTrigger}
                             />
                         )}
 
@@ -226,6 +230,7 @@ const Admin: React.FC = () => {
                                 apiEndpoint="/constructions"
                                 type="construction"
                                 renderAdditionalInfo={renderConstructionInfo}
+                                refreshTrigger={refreshTrigger}
                             />
                         )}
 
@@ -236,6 +241,7 @@ const Admin: React.FC = () => {
                                 apiEndpoint="/remodelings"
                                 type="remodeling"
                                 renderAdditionalInfo={renderRemodelingInfo}
+                                refreshTrigger={refreshTrigger}
                             />
                         )}
                     </AdminLayout>

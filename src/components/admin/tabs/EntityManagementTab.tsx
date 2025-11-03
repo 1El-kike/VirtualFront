@@ -11,6 +11,7 @@ interface EntityManagementTabProps<T> {
     type: 'swap' | 'rent' | 'reservation' | 'construction' | 'remodeling';
     renderAdditionalInfo?: (entity: T) => React.ReactNode;
     getAvailableActions?: (entity: T) => React.ReactNode;
+    refreshTrigger?: number;
 }
 
 export const EntityManagementTab = <T extends {
@@ -25,11 +26,13 @@ export const EntityManagementTab = <T extends {
     apiEndpoint,
     type,
     renderAdditionalInfo,
-    getAvailableActions
+    getAvailableActions,
+    refreshTrigger
 }: EntityManagementTabProps<T>) => {
     const { data: entities, isLoading, error, updateStatusMutation, cancelMutation } = useEntityManagement<T>({
         entityName,
-        apiEndpoint
+        apiEndpoint,
+        refreshTrigger
     });
 
     if (isLoading) return <LoadingState message={`Cargando ${entityName}...`} />;

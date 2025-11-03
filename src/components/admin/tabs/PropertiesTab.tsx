@@ -11,7 +11,7 @@ import { PropertyEditModal } from '../modals/PropertyEditModal';
 import { PropertyDeleteModal } from '../modals/PropertyDeleteModal';
 import { useQueryClient } from '@tanstack/react-query';
 
-export const PropertiesTab: React.FC = () => {
+export const PropertiesTab: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger }) => {
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -19,7 +19,7 @@ export const PropertiesTab: React.FC = () => {
     const queryClient = useQueryClient();
 
     const { data: properties, isLoading, error } = useQuery({
-        queryKey: ['properties'],
+        queryKey: ['properties', refreshTrigger],
         queryFn: async () => {
             const response = await api.get('/properties/');
             return response.data as Property[];

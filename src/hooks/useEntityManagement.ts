@@ -5,18 +5,20 @@ import api from "../utils/api";
 interface UseEntityManagementProps {
   entityName: string;
   apiEndpoint: string;
+  refreshTrigger?: number;
 }
 
 export const useEntityManagement = <T>({
   entityName,
   apiEndpoint,
+  refreshTrigger,
 }: UseEntityManagementProps) => {
   const { token } = useAuth();
   const queryClient = useQueryClient();
 
   // Query para obtener todas las entidades
   const { data, isLoading, error } = useQuery({
-    queryKey: [entityName],
+    queryKey: [entityName, refreshTrigger],
     queryFn: async () => {
       const response = await api.get(apiEndpoint);
       return response.data as T[];
