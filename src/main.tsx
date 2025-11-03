@@ -20,7 +20,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { HeroUIProvider } from '@heroui/react'
+import { HeroUIProvider, ToastProvider } from '@heroui/react'
 import './index.css'
 import './App.css'
 import './utils/i18n'
@@ -31,6 +31,13 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HeroUIProvider>
+      <ToastProvider
+        placement="top-right"
+        toastProps={{
+          shouldShowTimeoutProgress: true,
+          timeout: 4000,
+        }}
+      />
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
