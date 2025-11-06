@@ -105,8 +105,8 @@ const Admin: React.FC = () => {
             {/* Desktop Layout */}
             <div className="hidden h-full lg:flex">
                 {/* Sidebar - Hidden on mobile, shown on lg+ */}
-                <aside className="w-80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-r border-slate-700 sticky top-0 h-100vh flex-shrink-0">
-                    <div className=''>
+                <aside className="w-80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-r border-slate-700 sticky top-0 h-screen flex-shrink-0 ">
+                    <div className=' w-80 h-full overflow-y-auto'>
                         {/* Header del Sidebar */}
                         <div className="p-6 border-b border-slate-700">
                             <div className="flex items-center gap-3 mb-6">
@@ -154,7 +154,6 @@ const Admin: React.FC = () => {
                                 })}
                             </nav>
                         </div>
-
                         {/* Quick Actions */}
                         <div className="p-6">
                             <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
