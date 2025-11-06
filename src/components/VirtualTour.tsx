@@ -5,8 +5,11 @@ import { OrbitControls, useTexture, Html } from '@react-three/drei';
 // Interfaz para definir la estructura de una habitación en el tour virtual
 // Permite reutilizar el componente con diferentes conjuntos de habitaciones
 export interface Room {
+    id: number;
     name: string;
-    path: string;
+    imageUrl: string;
+    connections?: number[];
+    hotspotPositions?: { [key: string]: { top: string; left: string } };
 }
 
 // Props del componente VirtualTour para hacerlo reutilizable
@@ -18,20 +21,37 @@ interface VirtualTourProps {
 const VirtualTour: React.FC<VirtualTourProps> = ({ rooms }) => {
     // Estado para controlar la habitación actual mediante su índice en el array rooms
     const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
+    // Estado para manejar transiciones elegantes entre habitaciones
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
-    // Función para cambiar a la habitación anterior
+
+    // Función para cambiar a la habitación anterior con transición elegante
     const goToPreviousRoom = () => {
-        setCurrentRoomIndex((prev) => (prev === 0 ? rooms.length - 1 : prev - 1));
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setCurrentRoomIndex((prev) => (prev === 0 ? rooms.length - 1 : prev - 1));
+            setIsTransitioning(false);
+        }, 500);
     };
 
-    // Función para cambiar a la habitación siguiente
+    // Función para cambiar a la habitación siguiente con transición elegante
     const goToNextRoom = () => {
-        setCurrentRoomIndex((prev) => (prev === rooms.length - 1 ? 0 : prev + 1));
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setCurrentRoomIndex((prev) => (prev === rooms.length - 1 ? 0 : prev + 1));
+            setIsTransitioning(false);
+        }, 500);
     };
 
-    // Función para ir directamente a una habitación específica por índice
+    // Función para ir directamente a una habitación específica por índice con transición elegante
     const goToRoom = (index: number) => {
-        setCurrentRoomIndex(index);
+        if (index !== currentRoomIndex) {
+            setIsTransitioning(true);
+            setTimeout(() => {
+                setCurrentRoomIndex(index);
+                setIsTransitioning(false);
+            }, 500);
+        }
     };
 
     // Componente interno que representa la esfera panorámica
@@ -40,7 +60,7 @@ const VirtualTour: React.FC<VirtualTourProps> = ({ rooms }) => {
         // useTexture carga la textura de la habitación actual de manera lazy
         // Callback configura la textura: anisotropy: 1 y generateMipmaps: false para ahorrar memoria GPU
         // Esto previene errores de Context Lost al limitar el uso de memoria
-        const texture = useTexture(rooms[currentRoomIndex].path, (texture) => {
+        const texture = useTexture(rooms[currentRoomIndex]?.imageUrl || '', (texture) => {
             texture.anisotropy = 1;
             texture.generateMipmaps = false;
         });
@@ -63,14 +83,88 @@ const VirtualTour: React.FC<VirtualTourProps> = ({ rooms }) => {
             <Canvas style={{ width: '100%', height: '100%' }} camera={{ position: [0, 0, 0.1], near: 0.1, far: 1000, fov: 75 }}>
                 {/* Luz ambiental para iluminar la escena (aunque no es crítica para texturas) */}
                 <ambientLight intensity={0.5} />
-                {/* Suspense maneja la carga asíncrona de la textura, mostrando un fallback mientras carga */}
-                <Suspense fallback={<Html><div>Cargando...</div></Html>}>
-                    {/* Componente de la esfera panorámica que muestra la imagen 360 */}
-                    <PanoramaSphere />
-                </Suspense>
+                {/* Solo renderizar si hay habitaciones y una habitación actual */}
+                {rooms.length > 0 && rooms[currentRoomIndex] && (
+                    <Suspense fallback={<Html><div>Cargando...</div></Html>}>
+                        {/* Componente de la esfera panorámica que muestra la imagen 360 */}
+                        <PanoramaSphere />
+                        {/* Hotspots fijos en posiciones 3D que se mueven con la escena */}
+                        {rooms[currentRoomIndex]?.connections?.map((connectedIndex: number) => {
+                            const pos = rooms[currentRoomIndex]?.hotspotPositions?.[`${currentRoomIndex}-${connectedIndex}`];
+                            if (!pos || !rooms[connectedIndex]) return null;
+                            // Convertir porcentajes a coordenadas 3D (para esfera, pero adaptado)
+                            // Para esfera, posiciones en superficie
+                            const radius = 490; // Casi en la superficie
+                            const theta = (parseFloat(pos.left) / 100) * Math.PI * 2; // Horizontal
+                            const phi = (parseFloat(pos.top) / 100) * Math.PI; // Vertical
+                            const x = radius * Math.sin(phi) * Math.cos(theta);
+                            const y = radius * Math.cos(phi);
+                            const z = radius * Math.sin(phi) * Math.sin(theta);
+                            return (
+                                <Html
+                                    key={`hotspot-${currentRoomIndex}-${connectedIndex}`}
+                                    position={[x, y, z]}
+                                    center
+                                >
+                                    <div
+                                        onClick={() => goToRoom(connectedIndex)}
+                                        style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 0 15px rgba(0,0,0,0.7)',
+                                            transition: 'all 0.3s ease',
+                                            border: '2px solid rgba(0,0,0,0.3)',
+                                            pointerEvents: 'auto'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1.2)';
+                                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                                        }}
+                                        title={`Ir a ${rooms[connectedIndex].name}`}
+                                    >
+                                        <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#333' }}>
+                                            {rooms[connectedIndex].name}
+                                        </span>
+                                    </div>
+                                </Html>
+                            );
+                        })}
+                    </Suspense>
+                )}
                 {/* OrbitControls permite rotar la vista con el mouse para explorar la panorámica */}
                 <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} enableRotate={true} />
             </Canvas>
+
+            {/* Capa de transición elegante entre habitaciones */}
+            {isTransitioning && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '24px',
+                    zIndex: 10,
+                    transition: 'opacity 0.5s ease-in-out'
+                }}>
+                    Cambiando de habitación...
+                </div>
+            )}
 
             {/* Controles de navegación fuera del Canvas para cambiar entre habitaciones */}
             <div style={{
@@ -112,6 +206,7 @@ const VirtualTour: React.FC<VirtualTourProps> = ({ rooms }) => {
                     Siguiente →
                 </button>
             </div>
+
         </div>
     );
 };
