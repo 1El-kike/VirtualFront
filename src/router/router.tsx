@@ -20,6 +20,7 @@ export const Router = () => {
     const Admin = lazy(() => import('../pages/Admin'));
     const Card = lazy(() => import('../pages/Card'));
     const Profile = lazy(() => import('../pages/Profile'));
+    const VirtualTourPage = lazy(() => import('../pages/VirtualTourPage'));
     const NotFound = lazy(() => import('../pages/NotFound'));
 
     return (
@@ -99,6 +100,13 @@ export const Router = () => {
                                         <ProtectedRoute adminOnly>
                                             <Admin />
                                         </ProtectedRoute>
+                                    </SuspensedView>
+                                } />
+                            <Route
+                                path="/virtual-tour"
+                                element={
+                                    <SuspensedView>
+                                        <VirtualTourPage />
                                     </SuspensedView>
                                 } />
                             <Route path="*" element={<NotFound />} />
