@@ -20,7 +20,7 @@ const Rent = () => {
     return (
         <section className="py-16" data-aos="fade-up">
             <div className="container mx-auto px-4">
-                <h2 className="text-4xl font-bold text-center mb-12">{t('rent')}</h2>
+                <h2 className="text-2xl md:text-4xl font-bold text-white text-shadow-md text-shadow-purple-300 text-center mb-12">{t('rent')}</h2>
                 {isLoading ? (
                     <div className="text-center">Cargando Rentas...</div>
                 ) : error ? (

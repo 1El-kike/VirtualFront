@@ -37,7 +37,7 @@ const Header: React.FC = () => {
     return (
         <Navbar
             isBordered
-            className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
+            className="bg-gradient-to-r from-slate-900 to-blue-800 text-white shadow-lg"
             onMenuOpenChange={setIsMenuOpen}
         >
             <NavbarBrand>

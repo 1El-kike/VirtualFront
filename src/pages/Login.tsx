@@ -41,61 +41,65 @@ const Login: React.FC = () => {
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full  max-w-md order-1 lg:order-1"
+                className="w-full z-10 max-w-md order-1 lg:order-1"
             >
                 <div className="bg-white md:min-h-screen p-6 md:p-8 rounded-2xl shadow-2xl">
                     <motion.h2
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2, duration: 0.5 }}
-                        className="text-3xl font-bold text-center mb-6 text-gray-800"
+                        className="text-3xl font-bold text-center mb-6  text-gray-800"
                     >
                         Iniciar Sesión
                     </motion.h2>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3, duration: 0.5 }}
-                        >
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                {...register('email', { required: 'Email es requerido', pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' } })}
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            />
-                            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4, duration: 0.5 }}
-                        >
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Contraseña
-                            </label>
-                            <input
-                                type="password"
-                                id="password"
-                                {...register('password', { required: 'Contraseña es requerida', minLength: { value: 6, message: 'Mínimo 6 caracteres' } })}
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            />
-                            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
-                        </motion.div>
-                        <motion.button
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.5, duration: 0.5 }}
-                            type="submit"
-                            disabled={loginMutation.isPending}
-                            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                        >
-                            {loginMutation.isPending ? 'Iniciando...' : 'Iniciar Sesión'}
-                        </motion.button>
-                    </form>
+                    <div className=''>
+
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 ">
+                            <motion.div
+                                initial={{ opacity: 0, x: -50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3, duration: 0.5 }}
+                            >
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    {...register('email', { required: 'Email es requerido', pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' } })}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.4, duration: 0.5 }}
+                            >
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                    Contraseña
+                                </label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    {...register('password', { required: 'Contraseña es requerida', minLength: { value: 6, message: 'Mínimo 6 caracteres' } })}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                                {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+                            </motion.div>
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.5, duration: 0.5 }}
+                                type="submit"
+                                disabled={loginMutation.isPending}
+                                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                            >
+                                {loginMutation.isPending ? 'Iniciando...' : 'Iniciar Sesión'}
+                            </motion.button>
+                        </form>
+                    </div>
+
                     {loginMutation.isError && (
                         <motion.p
                             initial={{ opacity: 0 }}

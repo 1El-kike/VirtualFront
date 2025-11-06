@@ -20,9 +20,9 @@ const FeaturedProperties = () => {
 
 
     return (
-        <section className="py-16 bg-gray-50" data-aos="fade-up">
+        <section className="py-16 bg-gradient-to-bl from-blue-500/30 to-purple-500/30" data-aos="fade-up">
             <div className="container mx-auto px-4">
-                <h2 className="text-4xl font-bold text-center mb-12">{t('featuredProperties')}</h2>
+                <h2 className="text-2xl md:text-4xl font-bold text-white text-shadow-md text-shadow-purple-300 text-center mb-12">{t('featuredProperties')}</h2>
                 {isLoading ? (
                     <div className="text-center">Cargando propiedades...</div>
                 ) : error ? (

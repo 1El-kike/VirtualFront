@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardBody, CardHeader, Button, Input, Textarea, Select, SelectItem, addToast } from '@heroui/react';
+import { Card, CardBody, CardHeader, Button, Input, Textarea, Autocomplete, AutocompleteItem, addToast } from '@heroui/react';
 import { PlusIcon, HomeIcon, ArrowPathIcon, BuildingOfficeIcon, CalendarDaysIcon, CogIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
 import api from '../../utils/api';
 import type { Property } from '../../types';
@@ -80,11 +80,13 @@ export const EntityCreationForm: React.FC<EntityCreationFormProps> = ({
     });
 
     const [availableProperties, setAvailableProperties] = useState<Property[]>([]);
+    const [availableUsers, setAvailableUsers] = useState<{ id: number, nombre: string, email: string, telefonoMovil?: string }[]>([]);
 
     useEffect(() => {
         if (isExpanded) {
             loadAvailableData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isExpanded, activeTab]);
 
     const loadAvailableData = async () => {
@@ -93,9 +95,11 @@ export const EntityCreationForm: React.FC<EntityCreationFormProps> = ({
             const propertiesResponse = await api.get('/properties/');
             setAvailableProperties(propertiesResponse.data);
 
-            // Cargar usuarios (si es necesario)
-            // const usersResponse = await api.get('/users/');
-            // setUsers(usersResponse.data);
+            // Cargar usuarios clientes para formularios que los necesiten
+            if (activeTab === 'swaps' || activeTab === 'rents' || activeTab === 'reservations' || activeTab === 'constructions' || activeTab === 'remodelings') {
+                const usersResponse = await api.get('/auth/clients');
+                setAvailableUsers(usersResponse.data);
+            }
         } catch (error) {
             console.error('Error loading data:', error);
         }
@@ -385,37 +389,35 @@ export const EntityCreationForm: React.FC<EntityCreationFormProps> = ({
                 onChange={(e) => setPropertyForm(prev => ({ ...prev, bathrooms: e.target.value }))}
                 required
             />
-            <Select
+            <Autocomplete
                 label="Tipo de Propiedad"
-                selectedKeys={propertyForm.type ? [propertyForm.type] : []}
-                onSelectionChange={(keys) => {
-                    const selected = Array.from(keys)[0] as string;
-                    setPropertyForm(prev => ({ ...prev, type: selected }));
+                selectedKey={propertyForm.type}
+                onSelectionChange={(key) => {
+                    setPropertyForm(prev => ({ ...prev, type: key as string }));
                 }}
                 required
             >
-                <SelectItem key="CASA">Casa</SelectItem>
-                <SelectItem key="APARTAMENTO">Apartamento</SelectItem>
-                <SelectItem key="TERRENO">Terreno</SelectItem>
-                <SelectItem key="LOCAL_COMERCIAL">Local Comercial</SelectItem>
-                <SelectItem key="OFICINA">Oficina</SelectItem>
-            </Select>
-            <Select
+                <AutocompleteItem key="CASA">Casa</AutocompleteItem>
+                <AutocompleteItem key="APARTAMENTO">Apartamento</AutocompleteItem>
+                <AutocompleteItem key="TERRENO">Terreno</AutocompleteItem>
+                <AutocompleteItem key="LOCAL_COMERCIAL">Local Comercial</AutocompleteItem>
+                <AutocompleteItem key="OFICINA">Oficina</AutocompleteItem>
+            </Autocomplete>
+            <Autocomplete
                 label="Tipo de Transacción"
-                selectedKeys={propertyForm.transation ? [propertyForm.transation] : []}
-                onSelectionChange={(keys) => {
-                    const selected = Array.from(keys)[0] as string;
-                    setPropertyForm(prev => ({ ...prev, transation: selected }));
+                selectedKey={propertyForm.transation}
+                onSelectionChange={(key) => {
+                    setPropertyForm(prev => ({ ...prev, transation: key as string }));
                 }}
                 required
             >
-                <SelectItem key="VENTA">Venta</SelectItem>
-                <SelectItem key="RENTA">Renta</SelectItem>
-                <SelectItem key="PERMUTA">Permuta</SelectItem>
-                <SelectItem key="VENTA_O_RENTA">Venta o Renta</SelectItem>
-                <SelectItem key="VENTA_O_PERMUTA">Venta o Permuta</SelectItem>
-                <SelectItem key="TODAS">Todas</SelectItem>
-            </Select>
+                <AutocompleteItem key="VENTA">Venta</AutocompleteItem>
+                <AutocompleteItem key="RENTA">Renta</AutocompleteItem>
+                <AutocompleteItem key="PERMUTA">Permuta</AutocompleteItem>
+                <AutocompleteItem key="VENTA_O_RENTA">Venta o Renta</AutocompleteItem>
+                <AutocompleteItem key="VENTA_O_PERMUTA">Venta o Permuta</AutocompleteItem>
+                <AutocompleteItem key="TODAS">Todas</AutocompleteItem>
+            </Autocomplete>
             <div className="lg:col-span-2">
                 <Textarea
                     label="Descripción"
@@ -524,44 +526,48 @@ export const EntityCreationForm: React.FC<EntityCreationFormProps> = ({
 
     const renderSwapForm = () => (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Input
-                label="ID de Usuario"
-                type="number"
-                placeholder="ID del usuario"
-                value={swapForm.userId}
-                onChange={(e) => setSwapForm(prev => ({ ...prev, userId: e.target.value }))}
+            <Autocomplete
+                label="Usuario Cliente"
+                selectedKey={swapForm.userId}
+                onSelectionChange={(key) => {
+                    setSwapForm(prev => ({ ...prev, userId: key as string }));
+                }}
                 required
-            />
-            <Select
+            >
+                {availableUsers.map((user) => (
+                    <AutocompleteItem key={user.id.toString()}>
+                        {user.nombre} - {user.email} {user.telefonoMovil ? `(${user.telefonoMovil})` : ''}
+                    </AutocompleteItem>
+                ))}
+            </Autocomplete>
+            <Autocomplete
                 label="Propiedad Ofrecida"
-                selectedKeys={swapForm.propertyofrecidaId ? [swapForm.propertyofrecidaId] : []}
-                onSelectionChange={(keys) => {
-                    const selected = Array.from(keys)[0] as string;
-                    setSwapForm(prev => ({ ...prev, propertyofrecidaId: selected }));
+                selectedKey={swapForm.propertyofrecidaId}
+                onSelectionChange={(key) => {
+                    setSwapForm(prev => ({ ...prev, propertyofrecidaId: key as string }));
                 }}
                 required
             >
                 {availableProperties.map((property) => (
-                    <SelectItem key={property.id.toString()}>
-                        {property.title} - {property.location}
-                    </SelectItem>
+                    <AutocompleteItem key={property.id.toString()}>
+                        {`${property.title} - ${property.location}`}
+                    </AutocompleteItem>
                 ))}
-            </Select>
-            <Select
+            </Autocomplete>
+            <Autocomplete
                 label="Propiedad Deseada"
-                selectedKeys={swapForm.propertyDeseadaId ? [swapForm.propertyDeseadaId] : []}
-                onSelectionChange={(keys) => {
-                    const selected = Array.from(keys)[0] as string;
-                    setSwapForm(prev => ({ ...prev, propertyDeseadaId: selected }));
+                selectedKey={swapForm.propertyDeseadaId}
+                onSelectionChange={(key) => {
+                    setSwapForm(prev => ({ ...prev, propertyDeseadaId: key as string }));
                 }}
                 required
             >
                 {availableProperties.map((property) => (
-                    <SelectItem key={property.id.toString()}>
-                        {property.title} - {property.location}
-                    </SelectItem>
+                    <AutocompleteItem key={property.id.toString()}>
+                        {`${property.title} - ${property.location}`}
+                    </AutocompleteItem>
                 ))}
-            </Select>
+            </Autocomplete>
             <div className="lg:col-span-2">
                 <Textarea
                     label="Descripción"
@@ -607,22 +613,34 @@ export const EntityCreationForm: React.FC<EntityCreationFormProps> = ({
                 onChange={(e) => setRentForm(prev => ({ ...prev, FechaInit: e.target.value }))}
                 required
             />
-            <Input
-                label="ID de Propiedad"
-                type="number"
-                placeholder="ID de la propiedad"
-                value={rentForm.propertyId}
-                onChange={(e) => setRentForm(prev => ({ ...prev, propertyId: e.target.value }))}
+            <Autocomplete
+                label="Propiedad"
+                selectedKey={rentForm.propertyId}
+                onSelectionChange={(key) => {
+                    setRentForm(prev => ({ ...prev, propertyId: key as string }));
+                }}
                 required
-            />
-            <Input
-                label="ID de Usuario"
-                type="number"
-                placeholder="ID del usuario"
-                value={rentForm.userId}
-                onChange={(e) => setRentForm(prev => ({ ...prev, userId: e.target.value }))}
+            >
+                {availableProperties.map((property) => (
+                    <AutocompleteItem key={property.id.toString()}>
+                        {property.title} - {property.location}
+                    </AutocompleteItem>
+                ))}
+            </Autocomplete>
+            <Autocomplete
+                label="Usuario Cliente"
+                selectedKey={rentForm.userId}
+                onSelectionChange={(key) => {
+                    setRentForm(prev => ({ ...prev, userId: key as string }));
+                }}
                 required
-            />
+            >
+                {availableUsers.map((user) => (
+                    <AutocompleteItem key={user.id.toString()}>
+                        {user.nombre} - {user.email} {user.telefonoMovil ? `(${user.telefonoMovil})` : ''}
+                    </AutocompleteItem>
+                ))}
+            </Autocomplete>
             <div className="lg:col-span-2">
                 <Textarea
                     label="Servicios Incluidos"

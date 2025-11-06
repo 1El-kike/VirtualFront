@@ -18,11 +18,11 @@ const HeroSection = () => {
             <div className="absolute inset-0 opacity-50">
                 <img src={img} className='w-full h-full' alt="" />
             </div>
-            <div className="absolute right-2 bottom-0">
+            <div className="absolute right-2 bottom-10">
                 <img src={img2} className='w-96 object-cover' alt="" />
-                <div className='hidden relative md:block border border-teal-500 bg-gradient-to-bl from-teal-50 to-slate-50 w-96 h-40 rounded-xl shadow-2xl shadow-teal-400'>
-                    <ChatBubbleBottomCenterTextIcon className='w-20 h-20 absolute -top-1 left-[40%] text-yellow-500' />
-                    <p className='text-yellow-500 font-extrabold  text-4xl pt-16 font-sans text-center text-shadow-amber-950 text-shadow-2xs  w-auto'> 100% Calidad</p>
+                <div className='hidden relative md:block text-center border border-teal-500 bg-gradient-to-bl from-slate-100 to-purple-50 w-96 h-40 rounded-xl shadow-2xl shadow-teal-400'>
+                    <ChatBubbleBottomCenterTextIcon className='w-20 h-20 absolute top-1 left-[40%] text-yellow-500' />
+                    <p className='text-yellow-500 font-extrabold  text-4xl pt-20 font-sans text-center text-shadow-amber-950 text-shadow-2xs  w-auto'> 100% Calidad</p>
                 </div>
             </div>
             <div className="relative h-full flex flex-col justify-start items-center mt-10 md:gap-5 z-10 text-center px-4">
